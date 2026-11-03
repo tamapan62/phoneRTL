@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>สมุดโทรศัพท์ทีมงาน</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script>window.react=window.React;</script><script src="https://unpkg.com/lucide-react@0.468.0/dist/umd/lucide-react.min.js"></script><script>window.LucideReact=window.LucideReact||window.lucideReact;</script><script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script></head><body><div id="root"></div><script type="text/babel">const { useState, useMemo, useEffect } = React;
+const { Phone, Search, MapPin, Users, RefreshCcw, Copy, Check } = LucideReact;
+
+const rawCSV = `ลำดับ,หมวดลูกค้า,Area,Team,ฝ่ายCPRใหม่(1คน),เบอร์ฝ่าย ,แผนกงานซ่อมCMใหม่(1คน),เบอร์แผนกCM,แผนกงานบำรุงPMใหม่(1คน),เบอร์แผนกPM
+1,ลูกค้า7-11,BE,BE1,คุณมนตรี,090-989-9418,คุณสัญญากิจ,090-989-9136,คุณสัญญากิจ,090-989-9136
+2,ลูกค้า7-11,BE,BE2,คุณมนตรี,090-989-9418,คุณชวลิต,090-989-9194,คุณชวลิต,090-989-9194
+3,ลูกค้า7-11,BE,BE3,คุณคงฤทธิ์,090-989-9193,คุณยิ่งศิริ,090-989-9174,คุณยิ่งศิริ,090-989-9174
+4,ลูกค้า7-11,BE,BE4,คุณคงฤทธิ์,090-989-9193,คุณมนตรี,090-989-9154,คุณมนตรี,090-989-9154
+5,ลูกค้า7-11,BE,BE5,คุณคงฤทธิ์,090-989-9193,คุณเอกพล,083-097-1960,คุณเอกพล,083-097-1960
+6,ลูกค้า7-11,BE,BE6,คุณคงฤทธิ์,090-989-9193,คุณภานุวัตร,090-989-9531,คุณภานุวัตร,090-989-9531
+7,ลูกค้า7-11,BE,BE7,คุณปราโมทย์,090-989-9153,คุณวิชาญ,090-989-9195,คุณธัญพิสิษฐ์,083-097-1802
+8,ลูกค้า7-11,BE,BE8,คุณสมพงษ์,090-989-9117,คุณพัฒนพงษ์,090-989-9098,คุณมงคล,090-989-9452
+9,ลูกค้า7-11&ลูกค้านอก,BE,BE9SA,คุณรุ่งศักดิ์_SA,090-989-9550,คุณมโน,085-980-2562,คุณมโน,085-980-2562
+10,ลูกค้า7-11&ลูกค้านอก,BE,BE11SA,คุณรุ่งศักดิ์_SA,090-989-9550,คุณมโน,085-980-2562,คุณมโน,085-980-2562
+11,ลูกค้านอก,BE,BE10,คุณสมพงษ์,090-989-9117,คุณกรวิต,090-971-3021,คุณกรวิต,090-971-3021
+12,ลูกค้า7-11,BG,BG1,คุณเอกรัฐ,090-989-9121,คุณนรินทร์,090-989-9124,คุณจตุรงค์,090-989-9129
+13,ลูกค้า7-11,BG,BG2,คุณเอกรัฐ,090-989-9121,คุณสุทธิพงษ์,090-989-9143,คุณจตุรงค์,090-989-9129
+14,ลูกค้า7-11,BG,BG3,คุณสุระพงษ์,090-989-9303,คุณวีรวัฒน์,086-002-1709,คุณพงษ์พันธ์,090-989-9298
+15,ลูกค้า7-11,BG,BG4,คุณวรวุฒิ,090-989-9424,คุณวัฒนา,090-989-9302,คุณสัญชัย,061-997-1414
+16,ลูกค้า7-11&ลูกค้านอก,BG,BG5SA,คุณธวัชชัย_SA,090-989-9139,คุณปฐมพล,090-990-4883,คุณปฐมพล,090-990-4883
+17,ลูกค้า7-11&ลูกค้านอก,BG,BG6SA,คุณธวัชชัย_SA,090-989-9139,คุณปฐมพล,090-990-4883,คุณปฐมพล,090-990-4883
+18,ลูกค้า7-11&ลูกค้านอก,BG,BG7SA,คุณธวัชชัย_SA,090-989-9139,คุณปฐมพล,090-990-4883,คุณปฐมพล,090-990-4883
+19,ลูกค้า7-11&ลูกค้านอก,BG,BG8SA,คุณธวัชชัย_SA,090-989-9139,คุณปฐมพล,090-990-4883,คุณปฐมพล,090-990-4883
+20,ลูกค้า7-11,BG,BG9,คุณธวัชชัย,090-989-9139,คุณสุรศักดิ์,090-989-9125,คุณวีระศักดิ์,090-989-9406
+21,ลูกค้า7-11,BN,BN1,คุณสุทธิพงษ์,090-990-4556,คุณณัฐภูมิ,090-990-4553,คุณศรณรงค์,090-989-9095
+22,ลูกค้า7-11,BN,BN2,คุณสุทธิพงษ์,090-990-4556,คุณณัฐวุฒิ,090-989-4570,คุณวัชระพงษ์,090-989-9561
+23,ลูกค้า7-11,BN,BN3,คุณพรวิสิทธิ์,090-989-9242,คุณวัชรา,090-989-9513,คุณชุมพล,090-989-9516
+24,ลูกค้า7-11,BN,BN4,คุณนันทศักดิ์,090-989-9106,คุณไชยันต์,090-989-9120,คุณธนิตพงศ์,083-039-6604
+25,ลูกค้า7-11&ลูกค้านอก,BN,BN5SA,คุณมานะ_SA,090-989-9113,คุณบริบูรณ์,090-990-4861,คุณบริบูรณ์,090-990-4861
+26,ลูกค้า7-11&ลูกค้านอก,BN,BN6SA,คุณมานะ_SA,090-989-9113,คุณทวีศักดิ์,090-990-4852,คุณทวีศักดิ์,090-990-4852
+27,ลูกค้า7-11&ลูกค้านอก,BN,BN7SA,คุณมานะ_SA,090-989-9113,คุณบริบูรณ์ ,090-990-4861,คุณบริบูรณ์ ,090-990-4861
+28,ลูกค้า7-11&ลูกค้านอก,BN,BN8SA,คุณมานะ_SA,090-989-9113,คุณบริบูรณ์,090-990-4861,คุณบริบูรณ์ ,090-990-4861
+29,ลูกค้า7-11&ลูกค้านอก,BN,BN9,คุณพรวิสิทธิ์,090-989-9242,คุณสามารถ,090-989-9465,คุณกิตติศักดิ์,090-989-9100
+30,ลูกค้านอก,BN,BN10,คุณพิทยสัณห์,090-989-9455,คุณนิวัฒน์,090-990-4574,คุณวาทิตย์,090-989-9488
+31,ลูกค้า7-11&ลูกค้านอก,BN,BN11SA,คุณมานะ_SA,090-989-9113,คุณบริบูรณ์,090-990-4861,คุณบริบูรณ์ ,090-990-4861
+32,ลูกค้า7-11,BS,BS1,คุณบุญส่ง,090-989-9248,คุณบุญส่ง,090-989-9248,คุณบุญส่ง,090-989-9248
+33,ลูกค้า7-11,BS,BS2,คุณบุญส่ง,090-989-9248,คุณทรงวุฒิ,090-989-9247,คุณทรงวุฒิ,090-989-9247
+34,ลูกค้า7-11,BS,BS3,คุณนเรศว์,090-989-9159,คุณสมเกียรติ,090-989-9199,คุณสมเกียรติ,090-989-9199
+35,ลูกค้า7-11,BS,BS4,คุณนเรศว์,090-989-9159,คุณจักรกฤษณ์,090-989-9486,คุณจักรกฤษณ์,090-989-9486
+36,ลูกค้า7-11,BS,BS5,คุณวิกรานล์,090-989-9181,คุณธวัชชัย,064-183-7312,คุณจีรพงษ์,087-770-1130
+37,ลูกค้า7-11,BS,BS6,คุณวิกรานล์,090-989-9181,คุณเอกวัฒน์,086-333-0530,คุณจีรพงษ์,087-770-1130
+38,ลูกค้า7-11,BS,BS7,คุณกฤษณ์กมล,090-989-9446,คุณคทา,090-989-9156,คุณคทา,090-989-9156
+39,ลูกค้า7-11,BS,BS8,คุณกฤษณ์กมล,090-989-9446,คุณอภิชา,090-990-4638,คุณอภิชา,090-990-4638
+40,ลูกค้า7-11&ลูกค้านอก,BS,BS9SA,คุณธีระ_SA,085-980-2557,คุณชัชวาลย์,090-990-4969,คุณชัชวาลย์,090-990-4969
+41,ลูกค้า7-11&ลูกค้านอก,BS,BS10SA,คุณธีระ_SA,085-980-2557,คุณชัชวาลย์,090-990-4969,คุณชัชวาลย์,090-990-4969
+42,ลูกค้านอก,BS,BS11,คุณวิทูร,090-989-9209,คุณบุญส่ง,090-989-9248,คุณบุญส่ง,090-989-9248
+43,ลูกค้านอก,BS,BS12,คุณวิชิต,090-989-9518,คุณมนตรี ,090-989-9180,คุณอมรเทพ,090-989-9175
+44,ลูกค้า7-11,BW,BW1,คุณเกียรติกุล,090-989-9210,คุณกฤษฏา,090-989-9228,คุณจำเริญ,090-989-9218
+45,ลูกค้า7-11,BW,BW2,คุณเกียรติกุล,090-989-9210,คุณปัญญาวุธ,090-989-9211,คุณจำเริญ,090-989-9218
+46,ลูกค้า7-11,BW,BW3,คุณวิทูรย์,090-989-9209,คุณศักดิ์ดา,090-989-9235,คุณเฉลิมศักดิ์,095-532-1593
+47,ลูกค้า7-11,BW,BW4,คุณธนพล,090-989-9245,คุณกิตติศักดิ์,090-989-9244,คุณวัชระ,090-989-4818
+48,ลูกค้า7-11,BW,BW5,คุณณรงค์,090-990-4817,คุณปริณฑร,090-989-9239,คุณไกรวิชญ์,090-989-9226
+49,ลูกค้า7-11,BW,BW6,คุณณรงค์,090-990-4817,คุณประจักร,090-989-9214,คุณไกรวิชญ์,090-989-9226
+50,ลูกค้า7-11,BW,BW7,คุณกฤษณะ,090-989-9427,คุณธีรวัฒน์,090-918-1719,คุณธีรวัฒน์,090-918-1719
+51,ลูกค้า7-11&ลูกค้านอก,BW,BW8SA,คุณปริวัชร์_SA,090-989-9246,คุณสกุลศึก ,090-990-4838,คุณสกุลศึก ,090-990-4838
+52,ลูกค้า7-11&ลูกค้านอก,BW,BW9SA,คุณปริวัชร์_SA,090-989-9246,คุณสกุลศึก ,090-990-4838,คุณสกุลศึก ,090-990-4838
+53,ลูกค้า7-11,BW,BW10,คุณกฤษณะ,090-989-9427,คุณรชต,090-989-9429,คุณไกรวิชญ์,090-989-9226
+54,ลูกค้า7-11,NEL,NEL1,คุณธานินทร์,090-989-9337,คุณธวัชชัย,090-989-9334,คุณขจรเดช ,090-989-9378
+55,ลูกค้า7-11,NEL,NEL2,คุณธานินทร์,090-989-9337,คุณกฤษดา,090-989-9330,คุณอนันต์,090-990-4541
+56,ลูกค้า7-11,NEL,NEL3,คุณอุทัย,090-989-9562,คุณเฉลิมชัย,090-989-9107,คุณเฉลิมชัย ,090-989-9107
+57,ลูกค้า7-11,NEL,NEL4,คุณชัยวัฒน์,090-989-9331,คุณวิเศษ,090-989-9548,คุณศรัญญู,090-990-4531
+58,ลูกค้า7-11,NEL,NEL5,คุณชัยวัฒน์,090-989-9331,คุณกฤติภัทร,090-990-4909,คุณกฤติภัทร,090-990-4909
+59,ลูกค้า7-11,NEL,NEL6,คุณอุทัย,090-989-9562,คุณวีระ,083-097-2103,คุณวีระ,083-097-2103
+60,ลูกค้า7-11&ลูกค้านอก,NEL,NEL8SA,คุณอุทัย_SA,090-989-9562,คุณรัชกฤช ,090-989-9375,คุณรัชกฤช ,090-989-9375
+61,ลูกค้า7-11,NEU,NEU1,คุณสิทธิพร,090-989-9340,คุณวิชนุ,083-097-1780,คุณธีระศักดิ์,090-990-4564
+62,ลูกค้า7-11,NEU,NEU2,คุณสิทธิพร,090-989-9340,คุณกฤษดา,064-112-0322,คุณกฤษดา,064-112-0322
+63,ลูกค้า7-11,NEU,NEU3,คุณสุธิพงศ์,090-989-9342,คุณวิสิทธิ์ศักดิ์,083-097-1749,คุณวิสิทธิ์ศักดิ์,083-097-1749
+64,ลูกค้า7-11&ลูกค้านอก,NEU,NEU4SA,คุณสุธิพงศ์_SA,090-989-9342,คุณไสว,090-990-4898,คุณอนุสร,090-990-4897
+65,ลูกค้า7-11&ลูกค้านอก,NEU,NEU5SA,คุณสุธิพงศ์_SA,090-989-9342,คุณเกียรติศักดิ์  ,083-097-2041,คูณภานุวัฒน์,090-990-4906
+66,ลูกค้า7-11&ลูกค้านอก,NEU,NEU6SA,คุณสิทธิพร_SA,090-989-9340,คุณบึงพลาน,096-390-6169,คุณบึงพลาน,096-390-6169
+67,ลูกค้า7-11&ลูกค้านอก,RC,RC1,คุณเจษฎา,090-989-9257,คุณพันธุ์เทพ,090-989-9254,คุณอาทิตย์,090-989-9467
+68,ลูกค้า7-11&ลูกค้านอก,RC,RC2,คุณธนพรรธน์,090-989-9317,คุณเจริญชัย,064-124-2212,คุณเจริญชัย,064-124-2212
+69,ลูกค้า7-11&ลูกค้านอก,RC,RC4,คุณสุชาติ,083-097-2047,คุณแทน,099-757-3189,คุณแทน,099-757-3189
+70,ลูกค้า7-11&ลูกค้านอก,RC,RC5SA,คุณสุชาติ_SA,083-097-2047,คุณจิรศักดิ์ ,090-989-9367,คุณจิรศักดิ์,090-989-9367
+71,ลูกค้า7-11&ลูกค้านอก,RC,RC6SA,คุณกัมพล_SA,090-989-9369,คุณกิตติ,090-990-4812,คุณกิตติ,090-990-4812
+72,ลูกค้า7-11&ลูกค้านอก,RC,RC7SA,คุณเจษฎา_SA,090-989-9257,คุณธนกร,090-990-4782,คุณธนกร,090-990-4782
+73,ลูกค้า7-11&ลูกค้านอก,RC,RC8SA,คุณกัมพล_SA,090-989-9369,คุณปฏิภาณ ,090-990-4785,คุณปฏิภาณ ,090-990-4785
+74,ลูกค้า7-11&ลูกค้านอก,RC,RC9SA,คุณธนพรรธน์_SA,090-989-9317,คุณจิรศักดิ์,'090-989-9367,คุณจิรศักดิ์,090-989-9367
+75,ลูกค้า7-11&ลูกค้านอก,RC,RC10SA,คุณธนพรรธน์_SA,090-989-9317,คุณวัศวรรดิ์,090-990-4787,คุณวัศวรรดิ์,090-990-4787
+76,ลูกค้า7-11&ลูกค้านอก,REL,REL1,คุณวชิรา,090-989-9322,คุณภาณuพงค์,064-586-0053,คุณภาณุพงค์,064-586-0053
+77,ลูกค้า7-11&ลูกค้านอก,REL,REL2,คุณวชิรา,090-989-9322,คุณธีรพงษ์,083-097-1797,คุณธีรพงษ์,083-097-1797
+78,ลูกค้า7-11&ลูกค้านอก,REL,REL3,คุณจรัล,090-989-9356,คุณชยางกูร,090-989-9373,คุณชยางกูร,090-989-9373
+79,ลูกค้า7-11&ลูกค้านอก,REL,REL4,คุณสันติราษฎร์,090-989-9391,คุณอมร,090-989-9365,คุณอมร,090-989-9365
+80,ลูกค้า7-11&ลูกค้านอก,REL,REL5,คุณจรัล,090-989-9356,คุณคำรน,090-989-9358,คุณคำรน,090-989-9358
+81,ลูกค้า7-11&ลูกค้านอก,REL,REL6,คุณสันติราษฎร์,090-989-9391,คุณเชษฐพงษ์,090-989-9390,คุณเชษฐพงษ์,090-989-9390
+82,ลูกค้า7-11&ลูกค้านอก,REU,REU1,คุณนิวัฒน์,090-989-9349,คุณเอกพล,090-989-9325,คุณเอกพล,090-989-9325
+83,ลูกค้า7-11&ลูกค้านอก,REU,REU2,คุณนิวัฒน์,090-989-9349,คุณอานนท์,090-989-9321,คุณอานนท์,090-989-9321
+84,ลูกค้า7-11&ลูกค้านอก,REU,REU3,คุณสมโพธิ์,090-989-9385,คุณมานัสย์,090-989-9389,คุณมานัสย์,090-989-9389
+85,ลูกค้า7-11&ลูกค้านอก,REU,REU4,คุณสมโพธิ์,090-989-9385,คุณมนตรี,080-096-9219,คุณมนตรี ,080-096-9219
+86,ลูกค้า7-11&ลูกค้านอก,REU,REU5SA,คุณฐเดช_SA,090-989-9361,คุณณภัทร  ,090-989-9360,คุณณภัทร  ,090-989-9360
+87,ลูกค้า7-11&ลูกค้านอก,REU,REU5SA,คุณฐเดช_SA,090-989-9361,คุณณภัทร  ,090-989-9360,คุณณภัทร  ,090-989-9360
+88,ลูกค้า7-11&ลูกค้านอก,REU,REU6SA,คุณนิวัฒน์_SA,090-989-9349,คุณอดิศักดิ์  ,090-989-9007,คุณอดิศักดิ์  ,090-989-9007
+89,ลูกค้า7-11&ลูกค้านอก,RN,RN1,คุณสำราญ,090-989-9567,คุณอาณัติ,083-097-1809,คุณณัฐพงศ์,083-097-1806
+90,ลูกค้า7-11&ลูกค้านอก,RN,RN2,คุณสมพล,090-990-4775,คุณโโสฬส,083-097-1801,คุณลิขิต,080-963-9086
+91,ลูกค้า7-11&ลูกค้านอก,RN,RN3,คุณสำราญ,090-989-9567,คุณวรวุฒิ,083-097-1808,คุณชัยยศ,090-990-4540
+92,ลูกค้า7-11&ลูกค้านอก,RN,RN4,คุณณัฐวุฒิ,090-989-9108,คุณสรายุทธ,090-989-9236,คุณนฤเบศร์,082-989-1404
+93,ลูกค้า7-11&ลูกค้านอก,RN,RN5,คุณณัฐวุฒิ,090-989-9108,คุณอนุชิต,088-969-5484,คุณทวีศักดิ์,090-989-9570
+94,ลูกค้า7-11&ลูกค้านอก,RN,RN6,คุณอมร,090-989-9405,คุณจีระวัตร,083-097-2133,คุณจีระวัตร,083-097-2133
+95,ลูกค้า7-11&ลูกค้านอก,RN,RN7,คุณอมร,090-989-9405,คุณนรเศรษฐ์,090-989-9253,คุณศุภณัฐ,099-608-1410
+96,ลูกค้า7-11&ลูกค้านอก,RN,RN8,คุณอมร,090-989-9405,คุณนรเศรษฐ์,090-989-9253,คุณศุภณัฐ  ,099-608-1410
+97,ลูกค้า7-11&ลูกค้านอก,RN,RN9,คุณสมพล,090-990-4775,คุณอภิชาติ,088-267-5715,คุณกิตตินันท์,082-989-1409
+98,ลูกค้า7-11&ลูกค้านอก,RSL,RSL1,คุณชนะ,090-989-9293,คุณมุตาฟา   ,090-989-9274,คุณมุตาฟา   ,090-989-9274
+99,ลูกค้า7-11&ลูกค้านอก,RSL,RSL2,คุณวิจารณ์,090-989-9294,คุณอุทาน,083-097-1873,คุณอภิชาติ,090-989-9296
+100,ลูกค้า7-11&ลูกค้านอก,RSL,RSL3,คุณวิจารณ์,090-989-9294,คุณวิชิตพงษ์,080-692-8962,คุณวิชิตพงษ์,080-692-8962
+101,ลูกค้า7-11&ลูกค้านอก,RSL,RSL4,คุณชนะ,090-989-9293,คุณระพิน,090-989-9478,คุณระพิน,090-989-9478
+102,ลูกค้า7-11&ลูกค้านอก,RSL,RSL5SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสนอง,090-990-4722,คุณสนอง,090-990-4722
+103,ลูกค้า7-11&ลูกค้านอก,RSL,RSL6SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสนอง,090-990-4722,คุณสนอง,090-990-4722
+104,ลูกค้า7-11&ลูกค้านอก,RSL,RSL7SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสมจิตต์  ,090-990-4716,คุณสมจิตต์  ,090-990-4716
+105,ลูกค้า7-11&ลูกค้านอก,RSL,RSL8SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสมจิตต์  ,090-990-4716,คุณสมจิตต์  ,090-990-4716
+106,ลูกค้า7-11&ลูกค้านอก,RSL,RSL9SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสนอง,090-990-4722,คุณสนอง,090-990-4722
+107,ลูกค้า7-11&ลูกค้านอก,RSL,RSL10SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสมจิตต์  ,090-990-4716,คุณสมจิตต์  ,090-990-4716
+108,ลูกค้า7-11&ลูกค้านอก,RSL,RSL11SA,คุณกิตติเชษฐ์_SA,090-989-9266,คุณสมจิตต์  ,090-990-4716,คุณสมจิตต์  ,090-990-4716
+109,ลูกค้า7-11&ลูกค้านอก,RSL,RSL12SA,คุณเอกกฤต_SA,090-989-9526,คุณอดุลย์   ,090-990-4708,คุณอดุลย์   ,090-990-4708
+110,ลูกค้า7-11&ลูกค้านอก,RSL,RSL13,คุณชนะ,090-989-9293,คุณกิตติศักดิ์,090-989-9278,คุณกิตติศักดิ์,090-989-9278
+111,ลูกค้า7-11&ลูกค้านอก,RSU,RSU1,คุณสนธยา,090-989-9268,คุณศุภฤทธิ์,090-989-9271,คุณศุภฤทธิ์,090-989-9271
+112,ลูกค้า7-11&ลูกค้านอก,RSU,RSU2,คุณสนธยา,090-989-9268,คุณชัยยงค์,090-989-9287,คุณชัยยงค์,090-989-9287
+113,ลูกค้า7-11&ลูกค้านอก,RSU,RSU3,คุณสุนทร,090-990-4532,คุณเกียรติศักดิ์,083-097-1829,คุณวิวัฒน์,090-989-9265
+114,ลูกค้า7-11&ลูกค้านอก,RSU,RSU4,คุณสุนทร,090-990-4532,คุณวิสูตร,090-989-9306,คุณอรุณ,090-989-9307
+115,ลูกค้า7-11&ลูกค้านอก,RSU,RSU5,คุณปาราเมศ,095-401-9620,คุณอุกฤษฏ์,083-780-5343,คุณทศพร,083-780-5821
+116,ลูกค้า7-11&ลูกค้านอก,RSU,RSU6,คุณกฤษดา,090-989-9263,คุณองอาจ,090-989-9260,คุณนันทเศรษฐ์,083-097-2052
+117,ลูกค้า7-11&ลูกค้านอก,RSU,RSU7,คุณกฤษดา,090-989-9263,คุณสมชาย,090-989-9318,คุณณรงศักดิ์,090-989-9316
+118,ลูกค้า7-11&ลูกค้านอก,RSU,RSU8,คุณสนธยา,090-989-9268,คุณสมเจตน์,090-9899-466,คุณสมเจตน์,090-9899-466
+`;
+
+const parseCSV = (csvText) => {
+  const lines = csvText.trim().split('\n');
+  return lines.slice(1).map(line => {
+    const cols = line.split(/[\t,]/);
+    if (cols.length < 4) return null;
+    return {
+      id: cols[0]?.trim() || '-',
+      customerType: cols[1]?.trim() || '-',
+      area: cols[2]?.trim() || '-',
+      team: cols[3]?.trim() || '-',
+      cprName: cols[4]?.trim() || '-',
+      cprPhone: cols[5]?.trim() || '',
+      cmName: cols[6]?.trim() || '-',
+      cmPhone: cols[7]?.trim() || '',
+      pmName: cols[8]?.trim() || '-',
+      pmPhone: cols[9]?.trim() || '',
+    };
+  }).filter(Boolean);
+};
+
+const initialData = parseCSV(rawCSV);
+
+function App() {
+  const [data] = useState(initialData);
+  const [selectedArea, setSelectedArea] = useState('');
+  const [selectedTeam, setSelectedTeam] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [copyStatus, setCopyStatus] = useState(null);
+
+  const areas = useMemo(() => [...new Set(data.map(i => i.area))].sort(), [data]);
+
+  const teamsList = useMemo(() => {
+    if (!selectedArea) return [];
+    return [...new Set(data.filter(i => i.area === selectedArea).map(i => i.team))].sort();
+  }, [data, selectedArea]);
+
+  useEffect(() => {
+    setSelectedTeam('');
+  }, [selectedArea]);
+
+  const filteredData = useMemo(() => {
+    return data.filter(item => {
+      const matchArea = selectedArea ? item.area === selectedArea : true;
+      const matchTeam = selectedTeam ? item.team === selectedTeam : true;
+      const searchStr = `${item.cprName} ${item.cmName} ${item.pmName} ${item.cprPhone} ${item.cmPhone} ${item.pmPhone} ${item.team}`.toLowerCase();
+      const matchSearch = searchTerm ? searchStr.includes(searchTerm.toLowerCase()) : true;
+      return matchArea && matchTeam && matchSearch;
+    });
+  }, [data, selectedArea, selectedTeam, searchTerm]);
+
+  const handleCall = (phone) => {
+    if (!phone) return;
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
+    window.location.href = `tel:${cleanPhone}`;
+  };
+
+  const handleCopy = (phone) => {
+    if (!phone) return;
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const tempInput = document.createElement('input');
+    tempInput.value = cleanPhone;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    setCopyStatus(phone);
+    setTimeout(() => setCopyStatus(null), 2000);
+  };
+
+  const ContactRow = ({ title, name, phone, colorClass, labelColor }) => (
+    <div className={`p-4 ${colorClass} rounded-2xl flex items-center justify-between border border-slate-100 shadow-sm transition-all active:scale-[0.98]`}>
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-1">
+          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full text-white uppercase ${labelColor}`}>
+            {title}
+          </span>
+          <span className="text-xs font-bold text-slate-500">{name}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Phone size={14} className="text-slate-400" />
+          <span className="text-lg font-mono font-black text-slate-800">{phone || '-'}</span>
+        </div>
+      </div>
+      {phone && (
+        <div className="flex gap-2">
+          <button 
+            onClick={() => handleCopy(phone)}
+            className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 text-slate-400 active:bg-slate-50"
+            title="คัดลอกเบอร์"
+          >
+            {copyStatus === phone ? <Check size={20} className="text-green-500" /> : <Copy size={20} />}
+          </button>
+          <button 
+            onClick={() => handleCall(phone)}
+            className={`p-3 rounded-xl shadow-md text-white active:opacity-80 ${labelColor}`}
+            title="โทรออก"
+          >
+            <Phone size={20} fill="currentColor" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-100 font-sans pb-20">
+      <div className="bg-white px-4 pt-6 pb-4 sticky top-0 z-40 shadow-md">
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+              <Phone className="text-white" size={24} />
+            </div>
+            <div>
+              <h1 className="text-xl font-black text-slate-800 leading-tight">Phone Directory</h1>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">การสื่อสารที่มีประสิทธิภาพ</p>
+            </div>
+          </div>
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="ค้นหาชื่อ, ทีม หรือเบอร์โทร..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-sm font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative">
+              <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" />
+              <select 
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-2 py-2 text-xs font-black appearance-none outline-none cursor-pointer"
+              >
+                <option value="">เลือก AREA</option>
+                {areas.map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+            <div className="relative">
+              <Users size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+              <select 
+                value={selectedTeam}
+                onChange={(e) => setSelectedTeam(e.target.value)}
+                disabled={!selectedArea}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-2 py-2 text-xs font-black appearance-none outline-none disabled:opacity-50 cursor-pointer"
+              >
+                <option value="">เลือก TEAM</option>
+                {teamsList.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {(searchTerm || selectedArea) && (
+            <button 
+              onClick={() => {setSearchTerm(''); setSelectedArea(''); setSelectedTeam('');}}
+              className="w-full text-[10px] font-black text-red-500 flex items-center justify-center gap-1 uppercase py-1"
+            >
+              <RefreshCcw size={12} /> ล้างการค้นหา
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-md mx-auto p-4 space-y-6 mt-2">
+        {filteredData.length > 0 ? (
+          filteredData.map(item => (
+            <div key={item.id} className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-800 px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 px-2 py-0.5 rounded text-[10px] font-black text-white">#{item.id}</div>
+                  <h2 className="text-white font-black">AREA: {item.area} / TEAM: {item.team}</h2>
+                </div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">{item.customerType}</div>
+              </div>
+
+              <div className="p-4 space-y-3">
+                <ContactRow 
+                  title="ฝ่าย CPR" 
+                  name={item.cprName} 
+                  phone={item.cprPhone} 
+                  colorClass="bg-blue-50"
+                  labelColor="bg-blue-600"
+                />
+                <ContactRow 
+                  title="งานซ่อม CM" 
+                  name={item.cmName} 
+                  phone={item.cmPhone} 
+                  colorClass="bg-orange-50"
+                  labelColor="bg-orange-500"
+                />
+                <ContactRow 
+                  title="งานบำรุง PM" 
+                  name={item.pmName} 
+                  phone={item.pmPhone} 
+                  colorClass="bg-emerald-50"
+                  labelColor="bg-emerald-500"
+                />
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-20 text-center">
+            <div className="bg-slate-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="text-slate-400" size={32} />
+            </div>
+            <p className="text-slate-400 font-black">ไม่พบข้อมูลที่คุณค้นหา</p>
+          </div>
+        )}
+      </div>
+
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-max px-6 py-2 bg-slate-900/90 backdrop-blur rounded-full shadow-2xl z-50">
+        <p className="text-white text-[10px] font-black uppercase tracking-widest">
+          แสดงข้อมูล {filteredData.length} รายการ
+        </p>
+      </div>
+
+      {copyStatus && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-full text-xs font-black shadow-xl z-50 animate-bounce">
+          คัดลอกเบอร์สำเร็จ!
+        </div>
+      )}
+    </div>
+  );
+}
+</script><script type="text/babel">ReactDOM.createRoot(document.getElementById('root')).render(<App />);</script></body></html>
+
+
